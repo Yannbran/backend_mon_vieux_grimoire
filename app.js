@@ -1,8 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
+const booksRoutes = require('./routes/books');
 const path = require('path');
 const userRoutes = require('./routes/user');
 const app = express();
+
+app.use(cors()); // Utilise le middleware cors
 
 mongoose.connect('mongodb+srv://yann06dev:290982@clusteryann06dev.xu0inrz.mongodb.net/?retryWrites=true&w=majority&appName=ClusterYann06dev',
     { useNewUrlParser: true,
@@ -12,17 +16,7 @@ mongoose.connect('mongodb+srv://yann06dev:290982@clusteryann06dev.xu0inrz.mongod
 
 app.use(express.json());
 
-app.use((req, res) => {
-    res.json({ message: 'Votre requête a bien été reçue !' }); 
- });
-
- app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
-  });
-
   app.use('/api/auth', userRoutes);
+  app.use('/api/books', booksRoutes);
 
 module.exports = app;
