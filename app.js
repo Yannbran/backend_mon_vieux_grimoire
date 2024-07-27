@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+// Importe le module Mongoose pour interagir avec MongoDB
 const mongoose = require('mongoose');
 const booksRoutes = require('./routes/books');
+// Importe le module Path pour gérer les chemins de fichiers
 const path = require('path');
 const userRoutes = require('./routes/user');
+// Crée une nouvelle application Express
 const app = express();
 
 app.use(cors()); // Utilise le middleware cors
@@ -14,9 +17,12 @@ mongoose.connect('mongodb+srv://yann06dev:290982@clusteryann06dev.xu0inrz.mongod
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+// Utilise le middleware express.json() pour analyser les corps de requête JSON
 app.use(express.json());
 
+  // Utilise les routes d'authentification sur le chemin '/api/auth'    
   app.use('/api/auth', userRoutes);
+  // Utilise les routes de livres sur le chemin '/api/books'
   app.use('/api/books', booksRoutes);
 
 module.exports = app;
