@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 // Importe le module Mongoose pour interagir avec MongoDB
 const mongoose = require('mongoose');
 const booksRoutes = require('./routes/books');
@@ -9,7 +8,7 @@ const userRoutes = require('./routes/user');
 // Crée une nouvelle application Express
 const app = express();
 
-app.use(cors()); // Utilise le middleware cors
+
 
 mongoose.connect('mongodb+srv://yann06dev:290982@clusteryann06dev.xu0inrz.mongodb.net/?retryWrites=true&w=majority&appName=ClusterYann06dev',
     { useNewUrlParser: true,
@@ -19,6 +18,13 @@ mongoose.connect('mongodb+srv://yann06dev:290982@clusteryann06dev.xu0inrz.mongod
 
 // Utilise le middleware express.json() pour analyser les corps de requête JSON
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
+});
 
   // Utilise les routes d'authentification sur le chemin '/api/auth'    
   app.use('/api/auth', userRoutes);

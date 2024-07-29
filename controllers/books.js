@@ -27,7 +27,7 @@ exports.createBook = (req, res, next) => {
     // Si un fichier est fourni
     const bookObject = req.file ? {
         // Parse le corps de la requête en JSON
-        ...JSON.parse(req.body.thing),
+        ...JSON.parse(req.body.book),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     // Supprime l'ID de l'utilisateur
@@ -40,8 +40,9 @@ exports.createBook = (req, res, next) => {
                 res.status(401).json({ message : 'Non autorisé'});
             } else {
                 // Sinon, met à jour le livre
-                Book.updateOne({ _id: req.params.id}, { ...thingObject, _id: req.params.id})
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Livre modifié!'}))
+                console.log(error)
                 .catch(error => res.status(401).json({ error }));
             }
         })

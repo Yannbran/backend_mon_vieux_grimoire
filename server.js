@@ -14,7 +14,7 @@ const normalizePort = val => {
   return false;
 };
 // Définition du port d'écoute de notre serveur
-const port = normalizePort(process.env.PORT ||'3000');
+const port = normalizePort(process.env.PORT ||'4000');
 app.set('port', port);
 
 // Fonction pour gérer les erreurs lors de la création du serveur
