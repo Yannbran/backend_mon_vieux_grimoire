@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 // Middleware d'authentification
 module.exports = (req, res, next) => {
    try {
-      console.log(req.headers)
         // Extraction du token du header Authorization de la requête
         const token = req.headers.authorization.split(' ')[1];
         // Décodage du token
@@ -17,6 +16,5 @@ module.exports = (req, res, next) => {
 	next();
    } catch(error) {
         res.status(401).json({ error });
-        console.log(error)
    }
 };

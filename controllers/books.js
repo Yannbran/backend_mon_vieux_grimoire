@@ -2,6 +2,22 @@
 const fs = require('fs');
 const Book = require('../models/Book');
 
+
+
+// Fonction calculant la moyenne des nombres d'un tableau
+exports.average = (array) => {
+  // Initialise la somme à 0
+  let sum = 0;
+  // Parcourt chaque nombre dans le tableau
+  for (let nb of array) {
+      // Ajoute le nombre actuel à la somme
+      sum += nb;
+  };
+  // Calcule la moyenne en divisant la somme par le nombre d'éléments dans le tableau
+  // Utilise toFixed(1) pour arrondir le résultat à un chiffre après la virgule
+  return (sum/array.length).toFixed(1);
+}
+
 // Fonction pour créer un nouveau livre
 exports.createBook = (req, res, next) => {
     // Parse le corps de la requête en JSON
@@ -14,7 +30,10 @@ exports.createBook = (req, res, next) => {
         // Ajoute l'ID de l'utilisateur
         userId: req.auth.userId,
         // Ajoute l'URL de l'image
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        // Calcule la moyenne des notes
+        averageRating: bookObject.ratings && bookObject.ratings.length > 0 ? 
+        exports.average(bookObject.ratings.map(rating => rating.grade)) : 0
     });
     // Sauvegarde le livre dans la base de données
     book.save()
@@ -108,3 +127,12 @@ exports.createBook = (req, res, next) => {
       }
     );
   };
+
+  // Renvoi les 3 livres les mieux notés
+  exports.getBestRating = (req, res, next) => {
+    // Récupération de tous les livres, méthode find() de mongoose
+    // Puis tri (.sort) par rapport aux notes dans l'ordre décroissant (-1), (limit) aux 3 premiers éléments
+    Book.find().sort({averageRating: -1}).limit(3)
+        .then((books)=>res.status(200).json(books))
+        .catch((error)=>res.status(404).json({ error }));
+};

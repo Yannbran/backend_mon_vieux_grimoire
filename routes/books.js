@@ -8,7 +8,8 @@ const booksCtrl = require('../controllers/books');
 
 // Route pour obtenir tous les livres
 router.get('/', booksCtrl.getAllBooks);
-// Route pour obtenir un livre spécifique, nécessite une authentification
+router.get('/bestrating', booksCtrl.getBestRating);
+// Route pour obtenir un livre spécifique 
 router.get('/:id', booksCtrl.getOneBook);
 // Route pour créer un nouveau livre, nécessite une authentification
 // et Multer pour gérer les fichiers entrants

@@ -26,6 +26,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
   // Utilise les routes d'authentification sur le chemin '/api/auth'    
   app.use('/api/auth', userRoutes);
   // Utilise les routes de livres sur le chemin '/api/books'
