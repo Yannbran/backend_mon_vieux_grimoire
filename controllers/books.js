@@ -50,10 +50,10 @@ exports.modifyBook = (req, res, next) => {
     .then((book) => {
       // Si l'ID de l'utilisateur ne correspond pas à l'ID de l'utilisateur du livre
       if (book.userId != req.auth.userId) {
-        res.status(401).json({ message: "Non autorisé" });
+        return res.status(401).json({ message: "Non autorisé" });
       } else {
         // Sinon, met à jour le livre
-        Book.updateOne(
+        return Book.updateOne(
           { _id: req.params.id },
           { ...bookObject, _id: req.params.id }
         ).then(() => res.status(200).json({ message: "Livre modifié!" }));
@@ -72,14 +72,14 @@ exports.deleteBook = (req, res, next) => {
     .then((book) => {
       // Si l'ID de l'utilisateur ne correspond pas à l'ID de l'utilisateur du livre
       if (book.userId != req.auth.userId) {
-        res.status(401).json({ message: "Not authorized" });
+        return res.status(401).json({ message: "Not authorized" });
       } else {
         // Obtient le nom du fichier de l'image
         const filename = book.imageUrl.split("/images/")[1];
         // Supprime l'image du livre
         fs.unlink(`images/${filename}`, () => {
           // Supprime le livre de la base de données
-          Book.deleteOne({ _id: req.params.id })
+          return Book.deleteOne({ _id: req.params.id })
             .then(() => {
               res.status(200).json({ message: "Livre supprimé !" });
             })
