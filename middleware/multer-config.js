@@ -1,4 +1,7 @@
 const multer = require('multer');
+const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path');
 
 // Définit les types MIME pour les images
 const MIME_TYPES = {
@@ -23,3 +26,27 @@ const storage = multer.diskStorage({
 });
 
 module.exports = multer({storage: storage}).single('image');
+
+// Pour redimensionner les images uploader
+module.exports.resizeImage = (req, res, next) => {
+  // Vérifie si un fichier est téléchargé
+  if (!req.file) return next();
+
+  const { path: filePath, filename: fileName } = req.file;
+  const outputFilePath = path.join('images', `resized_${fileName}`);
+
+  sharp(filePath)
+    .resize(206, 260)
+    .toFile(outputFilePath)
+    .then(() => {
+      // Remplace l'image originale par l'image redimensionnée
+      fs.unlink(filePath, () => {
+        req.file.path = outputFilePath;
+        next();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      next();
+    });
+};
