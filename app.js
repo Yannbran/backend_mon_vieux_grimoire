@@ -2,9 +2,9 @@ const express = require('express');
 // Importe le module Mongoose pour interagir avec MongoDB
 const mongoose = require('mongoose');
 const booksRoutes = require('./routes/books');
+const userRoutes = require('./routes/user');
 // Importe le module Path pour gérer les chemins de fichiers
 const path = require('path');
-const userRoutes = require('./routes/user');
 // Crée une nouvelle application Express
 const app = express();
 

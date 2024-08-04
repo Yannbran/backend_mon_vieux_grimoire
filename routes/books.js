@@ -14,12 +14,12 @@ router.get('/bestrating', booksCtrl.getBestRating);
 router.get('/:id', booksCtrl.getOneBook);
 // Route pour créer un nouveau livre, nécessite une authentification
 // et Multer pour gérer les fichiers entrants
-router.post('/', auth, multer, booksCtrl.createBook);
+router.post('/', auth, multer, multer.resizeImage, booksCtrl.createBook);
 // Pour noter un livre
 router.post('/:id/rating', auth, booksCtrl.ratingBook); 
 // Route pour modifier un livre spécifique, nécessite une authentification 
 // et Multer pour gérer les fichiers entrants
-router.put('/:id', auth, multer, booksCtrl.modifyBook);
+router.put('/:id', auth, multer, multer.resizeImage, booksCtrl.modifyBook);
 // Route pour supprimer un livre spécifique, nécessite une authentification
 router.delete('/:id',auth, booksCtrl.deleteBook);
 
