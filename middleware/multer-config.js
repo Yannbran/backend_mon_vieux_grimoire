@@ -9,41 +9,31 @@ const MIME_TYPES = {
   'image/jpeg': 'jpg',
   'image/png': 'png'
 };
-// Configure le stockage des fichiers sur le disque
-const storage = multer.diskStorage({
-  // Les fichiers seront stockés dans le dossier 'images'
-  destination: (req, file, callback) => {
-    callback(null, 'images');
-  },
-  filename: (req, file, callback) => {
-    // Le nom du fichier est le nom original avec les espaces remplacés par des underscores
-    const name = file.originalname.split(' ').join('_');
-    // L'extension du fichier est déterminée par le type MIME
-    const extension = MIME_TYPES[file.mimetype];
-    // Le nom final du fichier est 'nom+timestamp.extension'
-    callback(null, name + Date.now() + '.' + extension);
-  }
-});
 
-module.exports = multer({storage: storage}).single('image');
+// Configure le stockage des fichiers en mémoire
+const storage = multer.memoryStorage();
 
-// Pour redimensionner les images uploader
+module.exports = multer({ storage: storage }).single('image');
+
+// Pour redimensionner les images uploadées
 module.exports.resizeImage = (req, res, next) => {
   // Vérifie si un fichier est téléchargé
   if (!req.file) return next();
 
-  const { path: filePath, filename: fileName } = req.file;
-  const outputFilePath = path.join('images', `resized_${fileName}`);
+  const { buffer, originalname } = req.file;
+  const name = originalname.split(' ').join('_').split('.')[0];
+  const filename = `${name}_${Date.now()}.webp`;
+  const outputFilePath = path.join('images', filename);
 
-  sharp(filePath)
-    .resize(206, 260)
+  sharp(buffer)
+    .resize(206, 260, {fit: 'contain'})
+    .toFormat('webp')
     .toFile(outputFilePath)
     .then(() => {
-      // Remplace l'image originale par l'image redimensionnée
-      fs.unlink(filePath, () => {
-        req.file.path = outputFilePath;
-        next();
-      });
+      // Met à jour le chemin et le nom du fichier dans la requête
+      req.file.filename = filename;
+      req.file.path = outputFilePath;
+      next();
     })
     .catch(err => {
       console.error(err);

@@ -2,21 +2,28 @@
 const fs = require("fs");
 const Book = require("../models/Book");
 
-
-
 // Fonction pour créer un nouveau livre
 exports.createBook = (req, res, next) => {
   // Parse le corps de la requête en JSON
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
+
+  
+  // Vérifie que l'année n'est pas supérieure à l'année en cours
+  const currentYear = new Date().getFullYear();
+  if (bookObject.year > currentYear) {
+    return res.status(400).json({ message: "L'année saisie ne peut pas être supérieure à l'année en cours." });
+  }
+
+
   // Crée un nouvel objet livre
   const book = new Book({
     ...bookObject,
     // Ajoute l'ID de l'utilisateur
     userId: req.auth.userId,
     // Ajoute l'URL de l'image
-    imageUrl: `${req.protocol}://${req.get("host")}/images/resized_${req.file.filename}`,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
     // Calcule la moyenne des notes
     averageRating: bookObject.ratings[0].grade   
   });
